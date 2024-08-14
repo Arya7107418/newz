@@ -1,15 +1,15 @@
 const API_KEY = "7c936188f3504c20bb9b1b074c409cc2";
-const url = "https://newsapi.org/v2/everything?q=";
+const url = "https://newsapi.org/v2/top-headlines?country=in&apiKey=";
 
-window.addEventListener("load", () => fetchNews("India"));
+window.addEventListener("load", () => fetchNews());
 
 function reload() {
     window.location.reload();
 }
 
-async function fetchNews(query) {
+async function fetchNews(query = "") {
     try {
-        const res = await fetch(`${url}${query}&apiKey=${API_KEY}`);
+        const res = await fetch(`${url}${API_KEY}&q=${query}`);
         if (!res.ok) {
             throw new Error(`HTTP error! status: ${res.status}`);
         }
@@ -18,10 +18,11 @@ async function fetchNews(query) {
             bindData(data.articles);
         } else {
             console.error("No articles found.");
+            displayErrorMessage("No articles found for your search.");
         }
     } catch (error) {
         console.error("Failed to fetch news:", error);
-        document.getElementById("cards-container").innerHTML = "<p>Failed to load news articles. Please try again later.</p>";
+        displayErrorMessage("Failed to load news articles. Please try again later.");
     }
 }
 
@@ -58,6 +59,11 @@ function fillDataInCard(cardClone, article) {
     cardClone.firstElementChild.addEventListener('click', () => {
         window.open(article.url, "_blank");
     });
+}
+
+function displayErrorMessage(message) {
+    const cardsContainer = document.getElementById("cards-container");
+    cardsContainer.innerHTML = `<p>${message}</p>`;
 }
 
 let curSelectedNav = null;
